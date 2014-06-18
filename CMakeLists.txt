@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 INCLUDE (CheckIncludeFiles)
 INCLUDE (CheckFunctionExists)
-INCLUDE (CheckSymbolExists)
 project(google-glog)
 
 if(NOT HAS_MZ_GLOBAL)
