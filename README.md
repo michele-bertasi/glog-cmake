@@ -1,39 +1,28 @@
-SAE
-===
-
-The Core Library of Social Analytic Engine.
-
-Requirements
-============
-
-We do regular developments with Linux and Mac OS X environments. Here's a list of our prerequists:
-
-	CMake 2.8+
-	g++ 4.8 or clang 3.3
-	protobuf 2.4+ (for RPC)
-	zeromq 3.2+ (for PRC)
-
-On Linux, it's easy to get those softwares and libraries with your distribution's package manager.
-
-On Mac OS X, please install the lastest XCode Command Line Tools and homebrew. Then you can install protobuf and zeromq with brew. We use libc++ by default on Mac OS X.
-
-Build
-=====
-
-We recommend to build the project outside the source tree. To do this, please go to the root of this project and execute the following commands:
-
-	mkdir build
-	cd build
-	cmake ..
-	make
-
-Then you can do some testing with:
-
-	ctest
-
-If something goes wrong with your build system, it's easy to delete the `build` directory and restart.
-
-Developer's Guide
+google-glog 0.3.3
 =================
 
-To develop and cotribute to this project, please follow the [Developer's Guide](https://github.com/THUKEG/saedb/wiki/Developer's-Guide).
+This repository contains a C++ version of the Google logging library.
+Documentation for the C++ implementation is in doc/.
+
+
+Origin
+------
+
+The code was taken from https://code.google.com/p/google-glog/ and adapted
+to work with cmake properly.
+
+
+Installation
+------------
+
+For building in a Unix environment, simply type
+
+    cmake -G 'Unix Makefiles' && make && make install
+
+On windows, open a command prompt and enter
+
+    cmake -G 'Visual Studio 10'
+
+This will generate project files for Visual Studio 2010.
+
+Of course you can use any other CMake generator you like.
