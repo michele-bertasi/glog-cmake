@@ -1,10 +1,16 @@
 cmake_minimum_required(VERSION 2.8)
 INCLUDE (CheckIncludeFiles)
 INCLUDE (CheckFunctionExists)
+INCLUDE (CheckLibraryExists)
+INCLUDE (CheckCSourceCompiles)
 project(google-glog)
 
 if(NOT HAS_MZ_GLOBAL)
     include(global.cmake)
+endif()
+
+if(${DEVICE_ROOT_FS})
+    CMAKE_REQUIRED_FLAGS(--sysroot ${DEVICE_ROOT_FS})
 endif()
 
 CHECK_INCLUDE_FILES (dlfcn.h HAVE_DLFCN_H)
@@ -34,11 +40,24 @@ CHECK_INCLUDE_FILES (ucontext.h HAVE_UCONTEXT_H)
 CHECK_INCLUDE_FILES (unistd.h HAVE_UNISTD_H)
 CHECK_INCLUDE_FILES (unwind.h HAVE_UNWIND_H)
 
+set(CMAKE_EXTRA_INCLUDE_FILES unistd.h fcntl.h)
 CHECK_FUNCTION_EXISTS(fcntl HAVE_FCNTL)
-CHECK_FUNCTION_EXISTS(pthread_rwlock_rdlock HAVE_RWLOCK)
 CHECK_FUNCTION_EXISTS(sigaltstack HAVE_SIGALTSTACK)
-CHECK_FUNCTION_EXISTS(__builtin_expect HAVE___BUILTIN_EXPECT)
-CHECK_FUNCTION_EXISTS(__sync_val_compare_and_swap HAVE___SYNC_VAL_COMPARE_AND_SWAP)
+
+CHECK_C_SOURCE_COMPILES (
+    "int main (void) {
+        int x = 0;
+        if (__builtin_expect(x, 0)) return 0;
+        else return 1; }" 
+    HAVE___BUILTIN_EXPECT)
+CHECK_C_SOURCE_COMPILES (
+    "int main() {
+        int bar= 10;
+        __sync_val_compare_and_swap(&bar, 10, 15);
+        return 0; }"
+    HAVE___SYNC_VAL_COMPARE_AND_SWAP)
+
+CHECK_LIBRARY_EXISTS(pthread pthread_rwlock_rdlock pthread.h HAVE_RWLOCK)
 
 macro(ADD_COMPILE_OPTION OPTION_NAME DESCRIPTION DEFAULT)
     OPTION(${OPTION_NAME} ${DESCRIPTION} ${DEFAULT})
