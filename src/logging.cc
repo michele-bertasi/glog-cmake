@@ -1223,8 +1223,11 @@ void LogMessage::Init(const char* file,
              << ' '
              << setfill(' ') << setw(5)
              << static_cast<unsigned int>(GetTID()) << setfill('0')
+#ifdef LOG_FILE_LINE
              << ' '
-             << data_->basename_ << ':' << data_->line_ << "] ";
+             << data_->basename_ << ':' << data_->line_
+#endif
+             << "] ";
   }
   data_->num_prefix_chars_ = data_->stream_->pcount();
 

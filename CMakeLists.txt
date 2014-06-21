@@ -40,6 +40,15 @@ CHECK_FUNCTION_EXISTS(sigaltstack HAVE_SIGALTSTACK)
 CHECK_FUNCTION_EXISTS(__builtin_expect HAVE___BUILTIN_EXPECT)
 CHECK_FUNCTION_EXISTS(__sync_val_compare_and_swap HAVE___SYNC_VAL_COMPARE_AND_SWAP)
 
+macro(ADD_COMPILE_OPTION OPTION_NAME DESCRIPTION DEFAULT)
+    OPTION(${OPTION_NAME} ${DESCRIPTION} ${DEFAULT})
+    if(${OPTION_NAME})
+        add_definitions(-D${OPTION_NAME}=1)
+    endif()
+endmacro()
+
+ADD_COMPILE_OPTION(LOG_FILE_LINE "Add file and line on log entries" ON)
+
 CONFIGURE_FILE(src/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/src/config.h)
 
 mz_use_default_compiler_settings()
