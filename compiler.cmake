@@ -315,7 +315,9 @@ if(MZ_IS_GCC AND MZ_HAS_CXX0X) # AND NOT DARWIN)
 endif()
 
 # compiler flags
-mz_add_definition(${CMAKE_SYSTEM_PROCESSOR}=1)
+if(${CMAKE_SYSTEM_PROCESSOR})
+    mz_add_definition(${CMAKE_SYSTEM_PROCESSOR}=1)
+endif()
 mz_add_flag(GCC -Wall -Werror -Wno-unused-function)
 if(WINDOWS)
     mz_add_definition(WIN32=1 WINDOWS=1)
