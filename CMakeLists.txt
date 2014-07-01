@@ -66,8 +66,6 @@ macro(ADD_COMPILE_OPTION OPTION_NAME DESCRIPTION DEFAULT)
     endif()
 endmacro()
 
-ADD_COMPILE_OPTION(LOG_FILE_LINE "Add file and line on log entries" ON)
-
 CONFIGURE_FILE(src/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/src/config.h)
 
 mz_use_default_compiler_settings()

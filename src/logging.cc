@@ -1157,6 +1157,11 @@ LogMessage::LogMessage(const char* file, int line, LogSeverity severity,
   data_->message_ = message;  // override Init()'s setting to NULL
 }
 
+LogMessage::LogMessage(LogSeverity severity)
+    : allocated_(NULL) {
+  Init(NULL, 0, severity, &LogMessage::SendToLog);
+}
+
 void LogMessage::Init(const char* file,
                       int line,
                       LogSeverity severity,
@@ -1203,7 +1208,7 @@ void LogMessage::Init(const char* file,
 
   data_->num_chars_to_log_ = 0;
   data_->num_chars_to_syslog_ = 0;
-  data_->basename_ = const_basename(file);
+  data_->basename_ = file ? const_basename(file) : NULL;
   data_->fullname_ = file;
   data_->has_been_flushed_ = false;
 
@@ -1222,16 +1227,16 @@ void LogMessage::Init(const char* file,
              << setw(6) << usecs
              << ' '
              << setfill(' ') << setw(5)
-             << static_cast<unsigned int>(GetTID()) << setfill('0')
-#ifdef LOG_FILE_LINE
-             << ' '
-             << data_->basename_ << ':' << data_->line_
-#endif
-             << "] ";
+             << static_cast<unsigned int>(GetTID());
+    if (file)
+      stream() << setfill('0')
+               << ' '
+               << data_->basename_ << ':' << data_->line_;
+    stream() << "] ";
   }
   data_->num_prefix_chars_ = data_->stream_->pcount();
 
-  if (!FLAGS_log_backtrace_at.empty()) {
+  if (!FLAGS_log_backtrace_at.empty() && file) {
     char fileline[128];
     snprintf(fileline, sizeof(fileline), "%s:%d", data_->basename_, line);
 #ifdef HAVE_STACKTRACE
