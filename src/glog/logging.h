@@ -367,6 +367,13 @@ DECLARE_bool(stop_logging_if_full_disk);
 #undef DECLARE_string
 #endif
 
+#ifdef GOOGLE_STRIP_FILE_LINE
+#define COMPACT_GOOGLE_LOG_IMPL(LEVEL) google::LogMessage(LEVEL)
+#else
+#define COMPACT_GOOGLE_LOG_IMPL(LEVEL) google::LogMessage( \
+    __FILE__, __LINE__, LEVEL)
+#endif
+
 // Log messages below the GOOGLE_STRIP_LOG level will be compiled away for
 // security reasons. See LOG(severtiy) below.
 
@@ -375,8 +382,7 @@ DECLARE_bool(stop_logging_if_full_disk);
 // better to have compact code for these operations.
 
 #if GOOGLE_STRIP_LOG == 0
-#define COMPACT_GOOGLE_LOG_INFO google::LogMessage( \
-      __FILE__, __LINE__)
+#define COMPACT_GOOGLE_LOG_INFO COMPACT_GOOGLE_LOG_IMPL(google::GLOG_INFO)
 #define LOG_TO_STRING_INFO(message) google::LogMessage( \
       __FILE__, __LINE__, google::GLOG_INFO, message)
 #else
@@ -385,8 +391,7 @@ DECLARE_bool(stop_logging_if_full_disk);
 #endif
 
 #if GOOGLE_STRIP_LOG <= 1
-#define COMPACT_GOOGLE_LOG_WARNING google::LogMessage( \
-      __FILE__, __LINE__, google::GLOG_WARNING)
+#define COMPACT_GOOGLE_LOG_WARNING COMPACT_GOOGLE_LOG_IMPL(google::GLOG_WARNING)
 #define LOG_TO_STRING_WARNING(message) google::LogMessage( \
       __FILE__, __LINE__, google::GLOG_WARNING, message)
 #else
@@ -395,8 +400,7 @@ DECLARE_bool(stop_logging_if_full_disk);
 #endif
 
 #if GOOGLE_STRIP_LOG <= 2
-#define COMPACT_GOOGLE_LOG_ERROR google::LogMessage( \
-      __FILE__, __LINE__, google::GLOG_ERROR)
+#define COMPACT_GOOGLE_LOG_ERROR COMPACT_GOOGLE_LOG_IMPL(google::GLOG_ERROR)
 #define LOG_TO_STRING_ERROR(message) google::LogMessage( \
       __FILE__, __LINE__, google::GLOG_ERROR, message)
 #else
@@ -1202,7 +1206,7 @@ public:
   LogMessage(const char* file, int line, const CheckOpString& result);
 
   // Constructor that does not use file and line, but only severity.
-  LogMessage(LogSeverity);
+  LogMessage(LogSeverity = GLOG_INFO);
 
   ~LogMessage();
 
